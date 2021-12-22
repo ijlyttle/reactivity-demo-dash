@@ -14,6 +14,7 @@ import base64
 import io
 
 from helpers.aggregate import aggregate_df
+from helpers.cols import cols_choice, cols_header
 
 app = dash.Dash(
     __name__, 
@@ -146,23 +147,17 @@ def download_inp(n_clicks, data_records):
               Output('table-inp', 'data'),
               Input('inp', 'data'))
 def update_table_inp(data_records):
-    # data is a dict serialization of the DataFrame
-    cols = [{'name': i, 'id': i} for i in data_records[0].keys()]
-    return cols, data_records
+     return cols_header(data_records), data_records   
 
 @app.callback(Output('cols-group', 'options'),
               Input('inp', 'data'))
 def update_cols_group(data_records):
-    df = pd.DataFrame.from_dict(data_records)
-    col_names = df.select_dtypes(include='object').columns.to_list()
-    return [{'label': i, 'value': i} for i in col_names]
+    return cols_choice(data_records, 'object')
 
 @app.callback(Output('cols-agg', 'options'),
               Input('inp', 'data'))
 def update_cols_agg(data_records):
-    df = pd.DataFrame.from_dict(data_records)
-    col_names = df.select_dtypes(include='number').columns.to_list()
-    return [{'label': i, 'value': i} for i in col_names]
+    return cols_choice(data_records, 'number')
 
 @app.callback(Output('agg', 'data'),
               Input('button-agg', 'n_clicks'),
@@ -185,10 +180,7 @@ def aggregate(n_clicks, data_records, cols_group, cols_agg, func_agg):
               Output('table-agg', 'data'),
               Input('agg', 'data'))
 def update_table_agg(data_records):
-    cols = []
-    if (len(data_records) > 0):
-        cols = [{'name': i, 'id': i} for i in data_records[0].keys()]
-    return cols, data_records
+    return cols_header(data_records), data_records
 
 @app.callback(
     Output('download-agg', 'data'),
