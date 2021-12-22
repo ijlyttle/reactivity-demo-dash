@@ -1,1 +1,1 @@
-web: gunicorn app-aggregate-local:server
+web: gunicorn app:server
