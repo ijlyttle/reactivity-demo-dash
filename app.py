@@ -2,16 +2,18 @@
 # visit http://127.0.0.1:8050/ in your web browser.
 
 import dash
+from dash.dependencies import Input, Output, State
 from dash import dash_table
 from dash import html
 from dash import dcc
-from dash.dependencies import Input, Output, State
+import dash_bootstrap_components as dbc
+
 import pandas as pd
 from palmerpenguins import load_penguins
-import dash_bootstrap_components as dbc
 import base64
 import io
 
+from helpers.aggregate import aggregate_df
 
 app = dash.Dash(
     __name__, 
@@ -24,6 +26,7 @@ agg_function_choices = ['mean', 'min', 'max']
 # see https://plotly.com/python/px-arguments/ for more options
 penguins = load_penguins()
 
+# make `server` available to Heroku
 server = app.server
 
 app.layout = html.Div(
@@ -124,8 +127,10 @@ def parse_input_file_contents(contents):
         print(e)
         df = pd.DataFrame()
 
-    # serilize DataFrame to storage
-    return df.to_dict('records')
+    # data stored in DOM as records
+    data_records = df.to_dict('records')
+
+    return data_records
 
 @app.callback(
     Output('download-inp', 'data'),
@@ -133,29 +138,29 @@ def parse_input_file_contents(contents):
     State('inp', 'data'),
     prevent_initial_call=True,
 )
-def download_inp(n_clicks, data):
-    df = pd.DataFrame.from_dict(data)
+def download_inp(n_clicks, data_records):
+    df = pd.DataFrame.from_dict(data_records)
     return dcc.send_data_frame(df.to_csv, 'download-inp.csv', index=False)
 
 @app.callback(Output('table-inp', 'columns'),
               Output('table-inp', 'data'),
               Input('inp', 'data'))
-def update_table_inp(data):
+def update_table_inp(data_records):
     # data is a dict serialization of the DataFrame
-    cols = [{'name': i, 'id': i} for i in data[0].keys()]
-    return cols, data
+    cols = [{'name': i, 'id': i} for i in data_records[0].keys()]
+    return cols, data_records
 
 @app.callback(Output('cols-group', 'options'),
               Input('inp', 'data'))
-def update_cols_group(data):
-    df = pd.DataFrame.from_dict(data)
+def update_cols_group(data_records):
+    df = pd.DataFrame.from_dict(data_records)
     col_names = df.select_dtypes(include='object').columns.to_list()
     return [{'label': i, 'value': i} for i in col_names]
 
 @app.callback(Output('cols-agg', 'options'),
               Input('inp', 'data'))
-def update_cols_agg(data):
-    df = pd.DataFrame.from_dict(data)
+def update_cols_agg(data_records):
+    df = pd.DataFrame.from_dict(data_records)
     col_names = df.select_dtypes(include='number').columns.to_list()
     return [{'label': i, 'value': i} for i in col_names]
 
@@ -166,35 +171,24 @@ def update_cols_agg(data):
               State('cols-agg', 'value'),
               State('func-agg', 'value'),
               prevent_initial_call=True)
-def aggregate(n_clicks, data, cols_group, cols_agg, func_agg):
+def aggregate(n_clicks, data_records, cols_group, cols_agg, func_agg):
     # create DataFrame
-    df = pd.DataFrame.from_dict(data)
+    df = pd.DataFrame.from_dict(data_records)
 
-    if (not cols_group is None):
-        df = df.groupby(cols_group)
-
-    if (cols_agg is None or len(cols_agg) == 0):
-        return []
-    
-    dict_agg = {}
-    for col in cols_agg:
-        dict_agg[col] = func_agg
-    
-    # aggregate DataFrame
-    df = df.agg(dict_agg).reset_index()
+    # aggregate
+    df_new = aggregate_df(df, cols_group, cols_agg, func_agg)
 
     # serialize DataFrame
-    return df.to_dict('records')
+    return df_new.to_dict('records')
 
 @app.callback(Output('table-agg', 'columns'),
               Output('table-agg', 'data'),
               Input('agg', 'data'))
-def update_table_agg(data):
-    # data is a dict serialization of the DataFrame
+def update_table_agg(data_records):
     cols = []
-    if (len(data) > 0):
-        cols = [{'name': i, 'id': i} for i in data[0].keys()]
-    return cols, data
+    if (len(data_records) > 0):
+        cols = [{'name': i, 'id': i} for i in data_records[0].keys()]
+    return cols, data_records
 
 @app.callback(
     Output('download-agg', 'data'),
@@ -202,8 +196,8 @@ def update_table_agg(data):
     State('agg', 'data'),
     prevent_initial_call=True,
 )
-def download_agg(n_clicks, data):
-    df = pd.DataFrame.from_dict(data)
+def download_agg(n_clicks, data_records):
+    df = pd.DataFrame.from_dict(data_records)
     return dcc.send_data_frame(df.to_csv, 'download-agg.csv', index=False)
 
 if __name__ == '__main__':
