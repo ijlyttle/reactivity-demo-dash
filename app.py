@@ -24,6 +24,8 @@ agg_function_choices = ['mean', 'min', 'max']
 # see https://plotly.com/python/px-arguments/ for more options
 penguins = load_penguins()
 
+server = app.server
+
 app.layout = html.Div(
     className='container-fluid',
     children=[
