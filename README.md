@@ -4,7 +4,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of this repository is to show how to implement a reactive data-science app using Shiny.
+The goal of this repository is to show how to implement a reactive data-science app using Dash.
 
 This is part of [*Data-Science Reactivity: Three Ways*](https://ijlyttle.github.io/reactivity-three-ways-book/), an effort to show how to make the same "app", using:
 
