@@ -1,3 +1,10 @@
+# RStudio stuff
+.Rproj.user
+*.Rproj
+.Rhistory
+.Rdata
+
+# virtual environment
 **/env
 
 # Byte-compiled / optimized / DLL files
