@@ -3,6 +3,7 @@ import pandas as pd
 def cols_choice (data_records, include):
     df = pd.DataFrame.from_dict(data_records)
     col_names = df.select_dtypes(include=include).columns.to_list()
+    
     return [{'label': i, 'value': i} for i in col_names]
 
 def cols_header (data_records):
