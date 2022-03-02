@@ -90,13 +90,15 @@ def update_table_inp(data_records):
 @app.callback(Output('cols-group', 'options'),
               Input('inp', 'data'))
 def update_cols_group(data_records):
-    return cols_choice(data_records, 'object')
+    df = pd.DataFrame.from_dict(data_records)
+    return cols_choice(df, 'object')
 
 
 @app.callback(Output('cols-agg', 'options'),
               Input('inp', 'data'))
 def update_cols_agg(data_records):
-    return cols_choice(data_records, 'number')
+    df = pd.DataFrame.from_dict(data_records)
+    return cols_choice(df, 'number')
 
 
 @app.callback(Output('agg', 'data'),
