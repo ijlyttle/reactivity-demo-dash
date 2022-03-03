@@ -14,14 +14,12 @@ from palmerpenguins import load_penguins
 from helpers.aggregate import aggregate_df, agg_function_choices
 from helpers.cols import cols_choice, cols_header
 
+penguins = load_penguins()
+
 app = dash.Dash(
     __name__, 
     external_stylesheets=[dbc.themes.BOOTSTRAP]
 )
-
-# assume you have a "long-form" data frame
-# see https://plotly.com/python/px-arguments/ for more options
-penguins = load_penguins()
 
 # make `server` available to Heroku
 server = app.server
