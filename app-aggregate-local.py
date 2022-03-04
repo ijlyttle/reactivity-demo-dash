@@ -80,12 +80,8 @@ app.layout = html.Div(
     ]
 ) 
 
-@app.callback(Output('table-inp', 'columns'),
-              Output('table-inp', 'data'),
-              Input('inp', 'data'))
-def update_table_inp(data_records):
-     return cols_header(data_records), data_records   
 
+# Inputs
 
 @app.callback(Output('cols-group', 'options'),
               Input('inp', 'data'))
@@ -93,13 +89,14 @@ def update_cols_group(data_records):
     df = pd.DataFrame.from_dict(data_records)
     return cols_choice(df, 'object')
 
-
 @app.callback(Output('cols-agg', 'options'),
               Input('inp', 'data'))
 def update_cols_agg(data_records):
     df = pd.DataFrame.from_dict(data_records)
     return cols_choice(df, 'number')
 
+
+# Calculations
 
 @app.callback(Output('agg', 'data'),
               Input('button-agg', 'n_clicks'),
@@ -118,6 +115,14 @@ def aggregate(n_clicks, data_records, cols_group, cols_agg, func_agg):
     # serialize DataFrame
     return df_new.to_dict('records')
 
+
+# Outputs
+
+@app.callback(Output('table-inp', 'columns'),
+              Output('table-inp', 'data'),
+              Input('inp', 'data'))
+def update_table_inp(data_records):
+     return cols_header(data_records), data_records   
 
 @app.callback(Output('table-agg', 'columns'),
               Output('table-agg', 'data'),
