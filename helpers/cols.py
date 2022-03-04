@@ -6,8 +6,12 @@ def cols_choice (df, include):
     return col_names
 
 def cols_header (data_records):
-    cols = []
-    if (len(data_records) > 0):
-        cols = [{'name': i, 'id': i} for i in data_records[0].keys()]
+  
+    if (len(data_records) == 0):
+        return []
 
+    cols = list(
+      map(lambda i: {'name': i, 'id': i}, data_records[0].keys())
+    )
+    
     return cols

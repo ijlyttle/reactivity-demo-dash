@@ -46,11 +46,13 @@ app.layout = html.Div(
                                 dbc.Label('Aggregation function'),
                                 dbc.Select(
                                     id='func-agg',
-                                    options=[{'label': i, 'value': i} for i in agg_function_choices],
+                                    options=list(
+                                      map(lambda i: {'label': i, 'value': i}, agg_function_choices)
+                                    ),
                                     value=agg_function_choices[0]
                                 ),
                                 html.Hr(),
-                                dbc.Button('Submit', className='btn btn-secondary', id='button-agg')
+                                dbc.Button(id='button-agg', children='Submit', class_name='btn btn-secondary')
                             ])
                         ])
                     ]
