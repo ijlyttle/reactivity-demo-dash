@@ -46,9 +46,7 @@ app.layout = html.Div(
                                 dbc.Label('Aggregation function'),
                                 dbc.Select(
                                     id='func-agg',
-                                    options=list(
-                                      map(lambda i: {'label': i, 'value': i}, agg_function_choices)
-                                    ),
+                                    options=[{'label': v, 'value': v} for v in agg_function_choices],
                                     value=agg_function_choices[0]
                                 ),
                                 html.Hr(),
@@ -82,7 +80,6 @@ app.layout = html.Div(
 
 
 # Inputs
-
 @app.callback(Output('cols-group', 'options'),
               Input('inp', 'data'))
 def update_cols_group(data_records):
