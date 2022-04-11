@@ -19,3 +19,20 @@ There's a [deployed version](https://aggregate-local.herokuapp.com) of this app.
 ![Reactivity diagram](figs/dash-aggregate-local.svg)
 
 ![Legend](figs/dash-legend.svg)
+
+## RStudio Cloud
+
+If you are running this from Ian's RStudio Cloud Project, there will be a package available called `rscloud.dash.py`.
+It has a single function, `run_dash_app()`, which helps us launch Dash from RStudio Cloud.
+
+From the root of the project, at the R console:
+
+```r
+library("rscloud.dash.py")
+run_dash_app("app-aggregate-local.py", venv = "venv")
+```
+
+It will launch the browser, then the app. 
+The browser will say "Connection Refused"; don't worry, wait a few seconds then reload.
+
+You can stop the Dash app from the R console.
